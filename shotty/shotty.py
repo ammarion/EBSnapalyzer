@@ -1,4 +1,6 @@
 import boto3
+import botocore
+import pyboto3
 import click
 
 session = boto3.Session(profile_name='sand')
@@ -141,7 +143,10 @@ def stop_instances(project):
 
     for i in instances:
         print('Stopping {0}....'.format(i.id))
-        i.stop()
+        try:
+            i.stop()
+        except botocore.exceptions.ClientError as e:
+            print(" Cloud not stop {0}. ".format(i.id) + str(e))
 
 
 @instances.command('start')
@@ -153,7 +158,10 @@ def stop_instances(project):
     instances = filter_instances(project)
     for i in instances:
         print('Starting {0}....'.format(i.id))
-        i.start()
+        try:
+            i.start()
+        except botocore.exceptions.ClientError as e:
+            print(" Cloud not start {0}. ".format(i.id) + str(e))
 
 
 if __name__ == '__main__':
